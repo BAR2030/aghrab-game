@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#090b0b">
+<title>عقرب | بازی امتیازی</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#090b0b;--panel:#141817;--gold:#f6c453;--gold2:#ffdf87;--muted:#9ca59e;--green:#a6d36c}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(ellipse at top,#272315 0%,#0c0f0e 42%,#070808 100%);color:#f8f5e9;font-family:Tahoma,Arial,sans-serif;min-height:100vh}
+button{font:inherit;cursor:pointer} .app{max-width:480px;margin:auto;min-height:100vh;padding:18px 16px 100px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.brand{display:flex;align-items:center;gap:10px}.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,#f6c453,#8b5c12);display:grid;place-items:center;box-shadow:0 0 24px #dca52b35;font-size:28px}.brand h1{font-size:20px;margin:0;color:var(--gold2);letter-spacing:.4px}.brand small{display:block;color:var(--muted);font-size:11px;margin-top:4px}.pill{border:1px solid #ffffff18;background:#ffffff08;padding:8px 10px;border-radius:12px;font-size:12px;color:#ddd}
+.balance{background:linear-gradient(135deg,#201d12,#151815);border:1px solid #d8a83a45;border-radius:22px;padding:18px;text-align:center;box-shadow:0 12px 35px #0005}.balance .label{color:var(--muted);font-size:13px}.coins{font-size:38px;font-weight:800;color:var(--gold2);margin:8px 0 4px}.coin-caption{font-size:12px;color:#c7b98f}.progress-wrap{margin-top:16px;text-align:right}.progress-info{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:7px}.progress{height:7px;background:#ffffff13;border-radius:99px;overflow:hidden}.progress span{display:block;height:100%;width:100%;background:linear-gradient(90deg,#b78320,#ffe18b);transition:width .2s}
+.tap-area{padding:18px 0 12px;text-align:center}.tap-hint{font-size:13px;color:var(--muted);margin:3px 0 16px}.scorpion-button{position:relative;margin:auto;width:218px;height:218px;border-radius:50%;border:1px solid #f4c65a88;background:radial-gradient(circle at 35% 25%,#5c481d,#241e10 48%,#101211 75%);box-shadow:0 0 0 9px #f4c65a0c,0 0 45px #e5b33b22,inset 0 0 35px #0009;display:grid;place-items:center;transition:transform .08s;user-select:none;-webkit-tap-highlight-color:transparent}.scorpion-button:active{transform:scale(.96)}.scorpion{font-size:100px;filter:drop-shadow(0 6px 10px #0009);transform:rotate(-8deg)}.tap-burst{position:absolute;color:var(--gold2);font-size:22px;font-weight:bold;pointer-events:none;animation:float .65s ease-out forwards}@keyframes float{from{opacity:1;transform:translateY(0) scale(.8)}to{opacity:0;transform:translateY(-70px) scale(1.2)}}.energy{margin:14px auto 0;max-width:270px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;color:var(--muted)}.energybar{height:6px;flex:1;background:#ffffff16;border-radius:99px;overflow:hidden}.energybar span{display:block;width:100%;height:100%;background:var(--green);transition:width .2s}
+.section-title{font-size:16px;margin:20px 2px 12px;color:#f4e6bd}.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:linear-gradient(145deg,#191e1b,#101312);border:1px solid #ffffff12;border-radius:17px;padding:14px;text-align:right;min-height:112px}.card .icon{font-size:23px}.card strong{display:block;margin:8px 0 5px;font-size:13px}.card small{color:var(--muted);font-size:11px;line-height:1.6}.action{width:100%;margin-top:10px;border:0;border-radius:10px;background:linear-gradient(135deg,#f5d476,#c18b22);color:#1c1607;padding:9px;font-size:12px;font-weight:bold}.action:disabled{background:#343a32;color:#aab2a7;cursor:default}
+.ref-card{background:#141916;border:1px solid #a5c86b33;border-radius:17px;padding:15px;display:flex;align-items:center;gap:12px}.ref-card .ref-icon{font-size:28px}.ref-card p{font-size:12px;color:var(--muted);line-height:1.7;margin:5px 0}.ref-card .action{margin-top:5px}
+.nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:#0a0d0cf0;border-top:1px solid #ffffff12;backdrop-filter:blur(15px)}.nav button{border:0;background:transparent;color:#879087;padding:8px 3px;font-size:11px;border-radius:12px}.nav button span{display:block;font-size:20px;margin-bottom:5px}.nav button.active{background:#eabf4b15;color:var(--gold2)}.page{display:none}.page.active{display:block}.notice{font-size:11px;color:#8f9a90;text-align:center;margin-top:17px;line-height:1.7}.leader{display:flex;justify-content:space-between;padding:13px;border-bottom:1px solid #ffffff10;font-size:13px}.leader:first-of-type{border-top:1px solid #ffffff10}.rank{color:var(--gold2);width:28px;display:inline-block}.profilebox{background:#141916;border:1px solid #ffffff12;border-radius:18px;padding:18px;text-align:center}.avatar{font-size:48px}.profilebox h2{font-size:18px;margin:8px}.muted{color:var(--muted);font-size:12px}.form-card{background:linear-gradient(145deg,#191e1b,#101312);border:1px solid #d8a83a35;border-radius:18px;padding:16px}
+.form-card label{display:block;font-size:12px;color:#d8d2bd;margin:13px 0 7px}
+.form-card input{width:100%;border:1px solid #ffffff20;background:#080b0a;color:#fff;border-radius:11px;padding:13px;font:inherit;font-size:14px;outline:none}
+.form-card input:focus{border-color:#f6c453aa}
+.calc{margin-top:12px;background:#ffffff08;border-radius:12px;padding:12px;color:var(--gold2);font-size:13px;line-height:1.8}
+.warning{font-size:11px;line-height:1.8;color:#d5b76d;margin-top:12px}
+.toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#f4d16e;color:#171307;padding:11px 16px;border-radius:12px;font-size:12px;font-weight:bold;opacity:0;pointer-events:none;transition:opacity .2s;z-index:10;white-space:nowrap}.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<main class="app">
+<header class="top">
+  <div class="brand"><div class="logo">🦂</div><div><h1>عقرب</h1><small>قلمرو امتیازها</small></div></div>
+  <div class="pill" id="user-pill">بازیکن مهمان</div>
+</header>
+<section class="page active" id="home-page">
+  <div class="balance">
+    <div class="label">موجودی امتیاز تو</div><div class="coins" id="balance">0</div><div class="coin-caption">🪙 امتیاز عقرب · فقط امتیاز بازی</div>
+    <div class="progress-wrap"><div class="progress-info"><span>انرژی</span><span id="energy-label">1000 / 1000</span></div><div class="progress"><span id="energy-progress"></span></div></div>
+  </div>
+  <div class="tap-area"><div class="tap-hint">برای جمع‌آوری امتیاز روی عقرب بزن!</div>
+    <button class="scorpion-button" id="tap-button" aria-label="جمع‌آوری امتیاز"><span class="scorpion">🦂</span></button>
+    <div class="energy">⚡ <span id="energy-small">1000</span><div class="energybar"><span id="energy-small-bar"></span></div></div>
+  </div>
+  <h3 class="section-title">🎯 کارهای روزانه</h3>
+  <div class="cards">
+    <article class="card"><div class="icon">🎁</div><strong>جایزه روزانه</strong><small>هر روز وارد بازی شو و جایزه بگیر.</small><button class="action" id="daily-btn">دریافت 250 امتیاز</button></article>
+    <article class="card"><div class="icon">🚀</div><strong>افزایش قدرت</strong><small>یک‌بار در نسخه آزمایشی قدرتت را تقویت کن.</small><button class="action" id="boost-btn">تقویت رایگان</button></article>
+  </div>
+  <p class="notice">نسخه نمایشی اولیه است؛ امتیازها روی همین دستگاه ذخیره می‌شوند و هنوز ارزش مالی یا قابلیت برداشت ندارند.</p>
+</section>
+<section class="page" id="tasks-page">
+  <h2 class="section-title">🎯 مأموریت‌ها</h2>
+  <div class="cards">
+    <article class="card"><div class="icon">🦂</div><strong>اولین شکار</strong><small>در بازی حضور داشته باش و 100 امتیاز جمع کن.</small><button class="action" id="task-tap">بررسی مأموریت</button></article>
+    <article class="card"><div class="icon">📅</div><strong>ورود روزانه</strong><small>جایزه روزانه را دریافت کن.</small><button class="action" id="task-daily">بررسی مأموریت</button></article>
+  </div>
+  <p class="notice">مأموریت‌های شبکه‌های اجتماعی و پرداخت، در این نسخه فعال نیستند.</p>
+</section>
+<section class="page" id="friends-page">
+  <h2 class="section-title">👥 دعوت دوستان</h2>
+  <div class="ref-card"><div class="ref-icon">🫂</div><div><strong>با دوستات بازی کن</strong><p>لینک دعوت مخصوص خودت را بفرست. با دعوت هر نفر، ۱۰۰ توکن جایزه می‌گیری و ۱۰٪ از امتیازهای کسب‌شده کاربر دعوت‌شده هم به تو تعلق می‌گیرد. این پاداش‌ها در نسخه آزمایشی هنوز به سرور متصل نیستند.</p><button class="action" id="invite-btn">اشتراک‌گذاری لینک دعوت</button></div></div>
+  <h3 class="section-title">🏆 رتبه‌بندی نمونه</h3>
+  <div class="card" style="padding:0;min-height:0"><div class="leader"><span><span class="rank">🥇</span> عقرب طلایی</span><strong>12,500</strong></div><div class="leader"><span><span class="rank">🥈</span> شکارچی شب</span><strong>9,200</strong></div><div class="leader"><span><span class="rank">🥉</span> بازیکن سایه</span><strong>7,850</strong></div><div class="leader"><span><span class="rank">#</span> تو</span><strong id="leader-score">0</strong></div></div>
+  <p class="notice">رتبه‌های بالا نمونه نمایشی‌اند و از کاربران واقعی دریافت نمی‌شوند.</p>
+</section>
+<section class="page" id="profile-page">
+  <h2 class="section-title">👤 پروفایل</h2>
+  <div class="profilebox"><div class="avatar">🦂</div><h2 id="profile-name">بازیکن مهمان</h2><div class="muted">عضو قلمرو عقرب</div><div class="coins" id="profile-balance">0</div><div class="muted">امتیاز کل</div></div>
+  <p class="notice">برای انتشار عمومی، اتصال امن به سرور و پایگاه داده لازم است. به اطلاعات حساس تلگرام دسترسی نده و توکن ربات را داخل این فایل قرار نده.</p>
+</section>
+<section class="page" id="withdraw-page">
+  <h2 class="section-title">💳 برداشت توکن عقرب</h2>
+  <div class="balance" style="margin-bottom:14px">
+    <div class="label">نرخ اعلام‌شده در بازی</div>
+    <div style="font-size:25px;font-weight:bold;color:var(--gold2);margin:8px 0">۱۰۰۰ توکن = ۱۰٬۰۰۰ تومان</div>
+    <div class="coin-caption">موجودی فعلی: <strong id="withdraw-balance">0</strong> توکن</div>
+  </div>
+  <form class="form-card" id="withdraw-form">
+    <label for="card-number">شماره کارت بانکی</label>
+    <input id="card-number" inputmode="numeric" autocomplete="off" maxlength="19" placeholder="شماره ۱۶ رقمی کارت" required>
+    <label for="withdraw-amount">مقدار توکن برای برداشت</label>
+    <input id="withdraw-amount" inputmode="numeric" type="number" min="1" step="1" placeholder="مثلاً 1000" required>
+    <div class="calc" id="withdraw-calc">مبلغ تقریبی: ۰ تومان</div>
+    <button class="action" type="submit" id="withdraw-submit">ثبت درخواست برداشت</button>
+    <div class="warning">نکته: این نسخه فقط فرم آزمایشی است. ثبت درخواست، پرداخت واقعی انجام نمی‌دهد و هنوز پیامی برای مالک ارسال نمی‌کند. برای فعال‌سازی واقعی، به سرور امن و اتصال ربات نیاز است. شماره کارت را تا قبل از راه‌اندازی امن سرور وارد نکن.</div>
+  </form>
+  <p class="notice">هر درخواست باید توسط مالک بررسی و تأیید شود. نرخ نمایش‌داده‌شده به‌تنهایی تضمین پرداخت واقعی نیست.</p>
+</section>
+</main>
+<nav class="nav">
+  <button class="active" data-page="home"><span>🦂</span>بازی</button>
+  <button data-page="tasks"><span>🎯</span>مأموریت‌ها</button>
+  <button data-page="friends"><span>👥</span>دعوت دوستان</button>
+  <button data-page="withdraw"><span>💳</span>برداشت</button>
+</nav>
+<script>
+(() => {
+ const tg = window.Telegram?.WebApp;
+ try { tg?.ready(); tg?.expand(); tg?.setHeaderColor?.('#090b0b'); tg?.setBackgroundColor?.('#090b0b'); } catch(e){}
+ const tgUser = tg?.initDataUnsafe?.user;
+ const name = tgUser ? (tgUser.first_name || 'بازیکن') : 'بازیکن مهمان';
+ document.getElementById('user-pill').textContent = name;
+ document.getElementById('profile-name').textContent = name;
+ const key = 'aghrab-demo-v1-' + (tgUser?.id || 'guest');
+ let state;
+ try { state = JSON.parse(localStorage.getItem(key)) || {}; } catch(e) { state = {}; }
+ state.score = Number(state.score || 0);
+ state.energy = Number.isFinite(state.energy) ? Math.min(1000, Math.max(0, state.energy)) : 1000;
+ state.daily = state.daily || '';
+ state.boosted = !!state.boosted;
+ state.taps = Number(state.taps || 0);
+ function save(){ try{localStorage.setItem(key,JSON.stringify(state));}catch(e){} render(); }
+ function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800);}
+ function render(){
+   document.getElementById('balance').textContent=state.score.toLocaleString('fa-IR');
+   document.getElementById('profile-balance').textContent=state.score.toLocaleString('fa-IR');
+   document.getElementById('leader-score').textContent=state.score.toLocaleString('fa-IR');
+   document.getElementById('withdraw-balance').textContent=state.score.toLocaleString('fa-IR');
+   document.getElementById('energy-label').textContent=state.energy+' / 1000';
+   document.getElementById('energy-progress').style.width=(state.energy/10)+'%';
+   document.getElementById('energy-small').textContent=state.energy;
+   document.getElementById('energy-small-bar').style.width=(state.energy/10)+'%';
+   document.getElementById('daily-btn').disabled=state.daily===new Date().toDateString();
+   document.getElementById('daily-btn').textContent=state.daily===new Date().toDateString()?'دریافت شد ✓':'دریافت 250 امتیاز';
+   document.getElementById('boost-btn').disabled=state.boosted;
+   document.getElementById('boost-btn').textContent=state.boosted?'استفاده شد ✓':'تقویت رایگان';
+   document.getElementById('task-tap').textContent=state.taps>=100?'تکمیل شد ✓':'بررسی مأموریت';
+   document.getElementById('task-daily').textContent=state.daily===new Date().toDateString()?'تکمیل شد ✓':'بررسی مأموریت';
+ }
+ document.getElementById('tap-button').addEventListener('click',e=>{
+   if(state.energy<1){toast('انرژی تمام شده؛ کمی صبر کن!');return;}
+   state.energy--; state.score++; state.taps++; save();
+   const b=document.createElement('span');b.className='tap-burst';b.textContent='+1';b.style.left=(e.offsetX||110)+'px';b.style.top=(e.offsetY||100)+'px';e.currentTarget.appendChild(b);setTimeout(()=>b.remove(),700);
+   try{tg?.HapticFeedback?.impactOccurred('light')}catch(err){}
+ });
+ document.getElementById('daily-btn').addEventListener('click',()=>{
+   if(state.daily===new Date().toDateString())return;
+   state.daily=new Date().toDateString();state.score+=250;save();toast('جایزه روزانه +250 امتیاز 🎁');
+ });
+ document.getElementById('boost-btn').addEventListener('click',()=>{
+   if(state.boosted)return;state.boosted=true;state.score+=100;save();toast('قدرتت بیشتر شد! +100 ⚡');
+ });
+ document.getElementById('task-tap').addEventListener('click',()=>toast(state.taps>=100?'مأموریت تکمیل شده است!':'برای تکمیل، '+Math.max(0,100-state.taps)+' بار دیگر لمس کن.'));
+ document.getElementById('task-daily').addEventListener('click',()=>toast(state.daily===new Date().toDateString()?'مأموریت تکمیل شده است!':'اول جایزه روزانه را بگیر.'));
+ document.getElementById('withdraw-balance').textContent = state.score.toLocaleString('fa-IR');
+ const amountInput = document.getElementById('withdraw-amount');
+ const cardInput = document.getElementById('card-number');
+ const calc = document.getElementById('withdraw-calc');
+ function updateWithdrawCalc(){
+   const amount = Math.max(0, Number(amountInput.value || 0));
+   const toman = amount * 10;
+   calc.textContent = 'مبلغ تقریبی: ' + Math.floor(toman).toLocaleString('fa-IR') + ' تومان';
+   document.getElementById('withdraw-balance').textContent = state.score.toLocaleString('fa-IR');
+ }
+ amountInput.addEventListener('input', updateWithdrawCalc);
+ document.getElementById('withdraw-form').addEventListener('submit', e=>{
+   e.preventDefault();
+   const card = cardInput.value.replace(/\\D/g,'');
+   const amount = Number(amountInput.value);
+   if(!/^\\d{16}$/.test(card)){toast('شماره کارت باید ۱۶ رقم باشد.');return;}
+   if(!Number.isInteger(amount) || amount < 1){toast('مقدار توکن را درست وارد کن.');return;}
+   if(amount > state.score){toast('موجودی توکن ناکافی');return;}
+   toast('فرم آزمایشی بررسی شد؛ ارسال به مالک هنوز فعال نیست.');
+   // Deliberately do not store card details or claim that a real request was sent.
+ });
+ document.getElementById('invite-btn').addEventListener('click',()=>{
+   const bot = 'YOUR_BOT_USERNAME';
+   const link = tgUser ? `https://t.me/${bot}?start=${tgUser.id}` : 'لینک دعوت بعد از تنظیم نام کاربری ربات فعال می‌شود.';
+   if(tg?.openTelegramLink && tgUser){tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent('بیا بازی عقرب رو امتحان کن! 🦂'));}
+   else if(navigator.share && tgUser){navigator.share({title:'بازی عقرب',text:'بیا بازی عقرب رو امتحان کن!',url:link}).catch(()=>{});}
+   else {navigator.clipboard?.writeText(link).then(()=>toast('لینک دعوت کپی شد')).catch(()=>toast('ابتدا نام کاربری ربات را در کد تنظیم کن.'));}
+ });
+ document.querySelectorAll('.nav button').forEach(btn=>btn.addEventListener('click',()=>{
+   document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x===btn));
+   document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===btn.dataset.page+'-page'));
+   if(btn.dataset.page==='profile'){document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));}
+ }));
+ // Profile is reachable by tapping the brand.
+ document.querySelector('.brand').addEventListener('click',()=>{
+   document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='profile-page'));
+   document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
+ });
+ setInterval(()=>{if(state.energy<1000){state.energy=Math.min(1000,state.energy+1);save();}},3000);
+ render();
+})();
+</script>
+</body>
+</html>
