@@ -34,6 +34,19 @@ button{font:inherit;cursor:pointer} .app{max-width:480px;margin:auto;min-height:
 .withdraw-soon{padding:26px 18px;text-align:center;border:1px solid #d8a83a55;border-radius:20px;background:radial-gradient(ellipse at top,#3a2b13,#141714 70%);box-shadow:0 12px 35px #0005}.withdraw-soon .soon{font-size:26px;font-weight:800;letter-spacing:1px;color:var(--gold2);margin:5px 0 18px}.withdraw-soon .date{font-size:18px;color:#f3d078;margin:14px 0}.withdraw-soon p{font-size:14px;line-height:1.9;color:#e5dfcb;margin:0}
 .coin-scorpion-photo{width:166px;height:166px;border-radius:50%;object-fit:cover;object-position:42% center;border:3px solid #d8a83a;box-shadow:0 0 20px #dca52b44}
 .profilebox{padding:10px;text-align:right}.profilebox .avatar{font-size:28px;text-align:center}.profilebox h2{text-align:center;font-size:15px;margin:4px}.profilebox .muted{text-align:center}.profile-stats{gap:5px;margin-top:8px}.stat{padding:7px}.stat small{font-size:10px;margin-bottom:4px}.stat strong{font-size:12px}
+ 
+/* Aghrab soft-cute visual polish */
+:root{--bg:#100c18;--panel:#21172b;--gold:#ffd166;--gold2:#ffe7a3;--muted:#c3b6ca;--green:#b7ed9b}
+body{background:radial-gradient(ellipse at 15% 0%,#382044 0,transparent 42%),radial-gradient(ellipse at 95% 30%,#183a37 0,transparent 35%),#100c18}
+.card,.form-card,.balance,.ref-card{border:1px solid rgba(255,231,163,.18);border-radius:24px;box-shadow:0 12px 35px rgba(0,0,0,.18)}
+button,.action,.nav button{border-radius:16px;transition:transform .16s ease,filter .16s ease,box-shadow .16s ease}
+button:active,.action:active{transform:scale(.98)}
+.action{box-shadow:0 5px 0 rgba(0,0,0,.16);background:linear-gradient(135deg,#ffd166,#f3a95c);color:#291629;font-weight:800}
+.brand .logo{filter:drop-shadow(0 0 12px rgba(255,209,102,.3));animation:scorpion-bob 3.2s ease-in-out infinite}
+@keyframes scorpion-bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-3px) rotate(3deg)}}
+.warning{border-radius:16px;padding:10px;background:rgba(255,209,102,.08)}
+input:disabled{opacity:.78;cursor:not-allowed;border-style:dashed}
+
 </style>
 </head>
 <body>
@@ -95,8 +108,17 @@ button{font:inherit;cursor:pointer} .app{max-width:480px;margin:auto;min-height:
     <div class="date">اواسط آبان ⏳</div>
     <p>توکن ماین کنید و خود را آماده برداشت کنید.</p>
   </div>
+  <div class="form-card" style="margin-top:14px">
+    <strong style="color:var(--gold2)">📝 اطلاعات برداشت (فعلاً غیرفعال)</strong>
+    <label for="withdraw-card">شماره کارت بانکی</label>
+    <input id="withdraw-card" type="text" value="ثبت شماره کارت هنوز فعال نیست" disabled aria-disabled="true">
+    <label for="withdraw-amount">مبلغ برداشت (توکن)</label>
+    <input id="withdraw-amount" type="text" value="۰" disabled aria-disabled="true">
+    <button class="action" id="withdraw-request">🔔 اطلاع به مدیریت از درخواست برداشت</button>
+    <p class="warning" id="withdraw-status">ثبت شماره کارت و برداشت واقعی غیرفعال است؛ با زدن دکمه فقط یک اعلان برای مدیریت ارسال می‌شود.</p>
+  </div>
   <div class="form-card" style="margin-top:14px"><strong style="color:var(--gold2)">💰 تعداد توکن عقرب | قیمت نمایشی</strong><div class="calc">۱۰۰ عقرب: ۱٬۰۰۰ تومان<br>۱٬۰۰۰ عقرب: ۱۰٬۰۰۰ تومان<br>۱۰٬۰۰۰ عقرب: ۱۰۰٬۰۰۰ تومان<br>۱۰۰٬۰۰۰ عقرب: ۱٬۰۰۰٬۰۰۰ تومان<br>۱٬۰۰۰٬۰۰۰ عقرب: ۱۰٬۰۰۰٬۰۰۰ تومان</div><p style="line-height:1.9;text-align:center;color:var(--gold2)">تا می‌توانید توکن ماین کنید، چون فرصت آن محدود خواهد بود.<br><b>(( کاربران بیشتر = بالا رفتن قیمت توکن ))</b></p></div>
-  <p class="notice">قیمت‌های بالا متن نمایشی هستند و ارزش یا قیمت بازار تأییدشده‌ای را نشان نمی‌دهند. قابلیت برداشت هنوز فعال نیست و پرداخت واقعی انجام نمی‌شود.</p>
+  <p class="notice">قیمت‌ها نمایشی هستند. شماره کارت و برداشت واقعی هنوز غیرفعال‌اند. دکمهٔ بالا فقط درخواست را به مدیریت اطلاع می‌دهد؛ موجودی اعلام‌شده از مرورگر قابل‌تأیید نیست و پرداختی انجام نمی‌شود.</p>
 </section>
 </main>
 <nav class="nav">
@@ -165,7 +187,10 @@ button{font:inherit;cursor:pointer} .app{max-width:480px;margin:auto;min-height:
  }
  function render(){
    document.getElementById('balance').textContent=state.score.toLocaleString('fa-IR');
+   updateWithdrawAmount();
    document.getElementById('profile-balance').textContent=state.score.toLocaleString('fa-IR');
+   const withdrawAmount = document.getElementById('withdraw-amount');
+   if (withdrawAmount) withdrawAmount.value = state.score.toLocaleString('fa-IR');
    renderLeaderboard();
    syncMiningWindow();
    document.getElementById('energy-label').textContent=state.energy+' / 1000';
@@ -209,14 +234,59 @@ button{font:inherit;cursor:pointer} .app{max-width:480px;margin:auto;min-height:
    if(state.boosted)return;state.boosted=true;state.score+=100;save();toast('قدرتت بیشتر شد! +100 ⚡');
  });
  document.getElementById('task-tap').addEventListener('click',()=>{if(state.tapReward)return;if(state.taps<10000){toast('هنوز '+(10000-state.taps).toLocaleString('fa-IR')+' کلیک باقی مانده.');return;}state.tapReward=true;state.score+=1000;save();toast('۱۰۰۰ توکن نمایشی دریافت شد! 🦂');});
- document.getElementById('channel-btn').addEventListener('click',()=>{if(tg?.openTelegramLink)tg.openTelegramLink('https://t.me/Desert_Scorpion2030');else window.open('https://t.me/Desert_Scorpion2030','_blank','noopener');});
- document.getElementById('channel-claim').addEventListener('click',()=>{if(state.channelReward)return;state.channelReward=true;state.score+=100;save();toast('۱۰۰ توکن نمایشی دریافت شد!');});
+ const CHANNEL_URL='https://t.me/Desert_Scorpion2030';
+ document.getElementById('channel-btn').addEventListener('click',()=>{
+   try { if(tg?.openTelegramLink) tg.openTelegramLink(CHANNEL_URL); else window.open(CHANNEL_URL,'_blank','noopener'); }
+   catch(e){ window.open(CHANNEL_URL,'_blank','noopener'); }
+ });
+ document.getElementById('channel-claim').addEventListener('click', async ()=>{
+   if(state.channelReward){toast('پاداش این مأموریت قبلاً دریافت شده است.');return;}
+   const webApp=window.Telegram&&window.Telegram.WebApp;
+   if(!webApp?.initData){toast('برای بررسی عضویت، بازی را از داخل ربات تلگرام باز کن.');return;}
+   const btn=document.getElementById('channel-claim'); const old=btn.textContent;
+   btn.disabled=true;btn.textContent='در حال بررسی عضویت...';
+   try{
+     const response=await fetch(API_BASE_URL+'/api/tasks/channel-claim',{method:'POST',headers:{'Authorization':'tma '+webApp.initData,'Accept':'application/json'}});
+     const data=await response.json().catch(()=>({}));
+     if(!response.ok) throw new Error(data.detail||'عضویت تأیید نشد');
+     if(data.already_claimed){state.channelReward=true;save();toast('پاداش این مأموریت قبلاً دریافت شده است.');return;}
+     state.channelReward=true;state.score+=100;save();toast('عضویت تأیید شد؛ ۱۰۰ توکن نمایشی اضافه شد 🎁');
+   }catch(err){toast(err.message||'بررسی عضویت انجام نشد. عضویت در کانال و تنظیم ربات را بررسی کن.');}
+   finally{btn.disabled=!!state.channelReward;btn.textContent=state.channelReward?'پاداش دریافت شد ✓':old;}
+ });
  document.getElementById('invite-btn').addEventListener('click',()=>{
    const bot = 'Desert_Scorpion_bot';
    const link = tgUser ? `https://t.me/${bot}?start=${tgUser.id}` : 'برای ساخت لینک اختصاصی، بازی را از داخل ربات تلگرام باز کن.';
    if(tg?.openTelegramLink && tgUser){tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent('بیا بازی عقرب رو امتحان کن! 🦂'));}
    else if(navigator.share && tgUser){navigator.share({title:'بازی عقرب',text:'بیا بازی عقرب رو امتحان کن!',url:link}).catch(()=>{});}
    else {navigator.clipboard?.writeText(link).then(()=>toast('لینک دعوت کپی شد')).catch(()=>toast('بازی را از داخل تلگرام باز کن.'));}
+ });
+ // برداشت آزمایشی: شماره کارت و مبلغ قابل ویرایش نیستند. پس از ثبت موفق اعلان،
+ // کل موجودی نمایشی همان دستگاه کسر می‌شود. این موجودی محلی است و ارزش مالی ندارد.
+ const withdrawAmountEl=document.getElementById('withdraw-amount');
+ function updateWithdrawAmount(){ if(withdrawAmountEl) withdrawAmountEl.value=Number(state.score||0).toLocaleString('fa-IR')+' توکن'; }
+ document.getElementById('withdraw-request')?.addEventListener('click', async (event) => {
+   const btn=event.currentTarget, status=document.getElementById('withdraw-status');
+   const webApp=window.Telegram&&window.Telegram.WebApp;
+   const amount=Math.max(0,Math.floor(Number(state.score)||0));
+   if(amount<=0){toast('موجودی توکن برای درخواست صفر است.');return;}
+   if(!webApp||!webApp.initData){toast('برای ارسال درخواست، بازی را از داخل تلگرام باز کن.');if(status)status.textContent='باید بازی را از داخل ربات تلگرام باز کنی.';return;}
+   btn.disabled=true;const oldText=btn.textContent;btn.textContent='در حال ارسال درخواست...';
+   try{
+     const response=await fetch(API_BASE_URL+'/api/withdrawals/request',{
+       method:'POST',headers:{'Content-Type':'application/json','Authorization':'tma '+webApp.initData},
+       body:JSON.stringify({claimed_tokens:amount})
+     });
+     const data=await response.json().catch(()=>({}));
+     if(!response.ok)throw new Error(data.detail||data.message||'ثبت درخواست ناموفق بود');
+     // Deduct immediately after backend accepted the request; never deduct if request failed.
+     state.score=Math.max(0,Number(state.score||0)-amount);save();updateWithdrawAmount();
+     if(status)status.textContent='درخواست ثبت شد؛ '+amount.toLocaleString('fa-IR')+' توکن از موجودی نمایشی این دستگاه کسر شد. برداشت واقعی و شماره کارت همچنان غیرفعال‌اند.';
+     toast('درخواست برداشت ارسال شد و توکن‌های نمایشی کسر شدند 🔔');
+   }catch(error){
+     if(status)status.textContent='درخواست ارسال نشد و موجودی تغییر نکرد. سرور باید آنلاین باشد.';
+     toast(error.message||'سرور در دسترس نیست.');
+   }finally{btn.disabled=false;btn.textContent=oldText;render();}
  });
  // پرداخت امن: ایجاد سفارش باید در سرور انجام شود؛ مرورگر به‌تنهایی نمی‌تواند پرداخت را تأیید کند.
  // آدرس سرور خود را در API_BASE_URL قرار دهید. سرور باید Telegram initData را اعتبارسنجی کند.
@@ -318,15 +388,21 @@ button{font:inherit;cursor:pointer} .app{max-width:480px;margin:auto;min-height:
    document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
  });
  // موسیقی آرام با Web Audio؛ برای رعایت محدودیت مرورگر فقط پس از لمس دکمه شروع می‌شود.
- let audioCtx=null, musicTimer=null, musicOn=false, musicStep=0, musicNodes=[];
+ let audioCtx=null, musicTimer=null, musicOn=false, musicStep=0;
  function playTone(){
    if(!audioCtx||!musicOn)return;
-   const notes=[110,146.83,164.81,146.83,123.47,164.81,130.81,164.81];
-   const now=audioCtx.currentTime;
-   const osc=audioCtx.createOscillator(); const gain=audioCtx.createGain();
-   osc.type='sine'; osc.frequency.setValueAtTime(notes[musicStep++%notes.length],now);
-   gain.gain.setValueAtTime(0.0001,now); gain.gain.linearRampToValueAtTime(0.055,now+0.25); gain.gain.setTargetAtTime(0.0001,now+1.8,0.45);
-   osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now); osc.stop(now+3);
+   // A short, gentle desert-like arpeggio synthesized locally (no external audio file needed).
+   const notes=[220,261.63,329.63,392,329.63,293.66,261.63,196];
+   const base=audioCtx.currentTime;
+   for(let j=0;j<4;j++){
+     const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+     const t=base+j*0.34, freq=notes[musicStep++%notes.length];
+     osc.type='sine';osc.frequency.setValueAtTime(freq,t);
+     gain.gain.setValueAtTime(0.0001,t);
+     gain.gain.linearRampToValueAtTime(0.035,t+0.06);
+     gain.gain.exponentialRampToValueAtTime(0.0001,t+0.30);
+     osc.connect(gain);gain.connect(audioCtx.destination);osc.start(t);osc.stop(t+0.32);
+   }
  }
  document.getElementById('music-btn').addEventListener('click',async()=>{
    try{
@@ -336,7 +412,7 @@ button{font:inherit;cursor:pointer} .app{max-width:480px;margin:auto;min-height:
      if(audioCtx.state==='suspended')await audioCtx.resume();
      musicOn=!musicOn;
      document.getElementById('music-btn').textContent=musicOn?'♫ موسیقی روشن':'♫ موسیقی';
-     if(musicOn){playTone();musicTimer=setInterval(playTone,2200);toast('موسیقی صحرا روشن شد 🎵');}
+     if(musicOn){playTone();musicTimer=setInterval(playTone,1500);toast('موسیقی صحرا روشن شد 🎵');}
      else{clearInterval(musicTimer);musicTimer=null;toast('موسیقی خاموش شد');}
    }catch(e){toast('برای پخش، صدای گوشی را بررسی و دوباره بزن.');}
  });
