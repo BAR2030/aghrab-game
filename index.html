@@ -220,7 +220,7 @@ button{font:inherit;cursor:pointer} .app{max-width:480px;margin:auto;min-height:
    else if(navigator.share && tgUser){navigator.share({title:'بازی عقرب',text:'بیا بازی عقرب رو امتحان کن!',url:link}).catch(()=>{});}
    else {navigator.clipboard?.writeText(link).then(()=>toast('لینک دعوت کپی شد')).catch(()=>toast('بازی را از داخل تلگرام باز کن.'));}
  });
- document.querySelectorAll('.tier-buy').forEach(btn=>btn.addEventListener('click',()=>{const tier=btn.dataset.tier==='cip'?'cip':'vip';state.pendingTier=tier==='cip'?'CIP 🎖️ — ۴۷۹٬۸۰۰ تومان':'VIP 🥇 — ۲۳۹٬۹۰۰ تومان';save();const paymentUrl=tier==='cip'?'https://pay.pexn.ir/l/j3pZMXG':'https://pay.pexn.ir/l/dwpBjsf';toast('در حال باز کردن درگاه پرداخت. فعال‌سازی اشتراک پس از تأیید پرداخت انجام می‌شود.');window.open(paymentUrl,'_blank','noopener,noreferrer');}));
+ document.querySelectorAll('.tier-buy').forEach(btn=>btn.addEventListener('click',()=>{const tier=btn.dataset.tier==='cip'?'cip':'vip';state.pendingTier=tier==='cip'?'CIP 🎖️ — ۴۷۹٬۸۰۰ تومان':'VIP 🥇 — ۲۳۹٬۹۰۰ تومان';save();const paymentUrl=tier==='cip'?'https://pay.pexn.ir/l/j3pZMXG':'https://pay.pexn.ir/l/dwpBjsf';toast('در حال باز کردن درگاه پرداخت. فعال‌سازی اشتراک پس از تأیید پرداخت انجام می‌شود.');try{if(tg&&typeof tg.openLink==='function'){tg.openLink(paymentUrl);}else{window.location.href=paymentUrl;}}catch(e){window.location.href=paymentUrl;}}));
  document.getElementById('submit-receipt').addEventListener('click',()=>{
    const file=document.getElementById('receipt-file').files?.[0];
    if(!file){toast('اول تصویر رسید را انتخاب کن.');return;}
