@@ -227,7 +227,7 @@ input:disabled{opacity:.78;cursor:not-allowed;border-style:dashed}
    else if(navigator.share && tgUser){navigator.share({title:'بازی عقرب',text:'بیا بازی عقرب رو امتحان کن!',url:link}).catch(()=>{});}
    else {navigator.clipboard?.writeText(link).then(()=>toast('لینک دعوت کپی شد')).catch(()=>toast('بازی را از داخل تلگرام باز کن.'));}
  });
- // ثبت برداشت: پس از پذیرفته‌شدن درخواست، مبلغ از موجودی بازی کسر می‌شود.
+ // برداشت: فقط بعد از اینکه سرور درخواست را ثبت کرد و پیام را به ادمین فرستاد، توکن‌ها از موجودی نمایشی کسر می‌شوند.
  const withdrawAmountEl=document.getElementById('withdraw-amount');
  function updateWithdrawAmount(){ if(withdrawAmountEl && !withdrawAmountEl.value) withdrawAmountEl.placeholder='حداکثر '+Number(state.score||0).toLocaleString('fa-IR')+' توکن'; }
  document.getElementById('withdraw-request')?.addEventListener('click', async (event) => {
@@ -248,11 +248,11 @@ input:disabled{opacity:.78;cursor:not-allowed;border-style:dashed}
      const data=await response.json().catch(()=>({}));
      if(!response.ok)throw new Error(data.detail||data.message||'ثبت درخواست ناموفق بود');
      state.score=Math.max(0,Number(state.score||0)-amount);save();
-     if(status)status.textContent='درخواست برداشت ثبت شد و '+amount.toLocaleString('fa-IR')+' توکن از موجودی کم شد.';
+     if(status)status.textContent='✅ درخواست ثبت شد؛ '+amount.toLocaleString('fa-IR')+' توکن کسر شد و شماره کارت و مقدار برداشت برای مدیریت ارسال شد.';
      withdrawAmountEl.value='';document.getElementById('withdraw-card').value='';
      toast('درخواست برداشت برای مدیریت ارسال شد 🔔');
    }catch(error){
-     if(status)status.textContent='درخواست ارسال نشد؛ موجودی تغییر نکرد.';
+     if(status)status.textContent='❌ درخواست ارسال نشد؛ توکن‌ها کسر نشدند. بازی باید از داخل تلگرام باز باشد و سرور/ربات فعال باشد.';
      toast(error.message||'سرور در دسترس نیست.');
    }finally{btn.disabled=false;btn.textContent=oldText;render();}
  });
