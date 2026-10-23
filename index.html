@@ -218,24 +218,31 @@ button{font:inherit;cursor:pointer} .app{max-width:480px;margin:auto;min-height:
    else if(navigator.share && tgUser){navigator.share({title:'بازی عقرب',text:'بیا بازی عقرب رو امتحان کن!',url:link}).catch(()=>{});}
    else {navigator.clipboard?.writeText(link).then(()=>toast('لینک دعوت کپی شد')).catch(()=>toast('بازی را از داخل تلگرام باز کن.'));}
  });
- document.querySelectorAll('.tier-buy').forEach(btn=>btn.addEventListener('click',()=>{
+ // Delegated payment handler: attach once so the button still works if the UI is re-rendered.
+ document.addEventListener('click', function(event) {
+   const btn = event.target && event.target.closest ? event.target.closest('.tier-buy') : null;
+   if (!btn) return;
+   event.preventDefault();
    const tier = btn.dataset.tier === 'cip' ? 'cip' : 'vip';
    const paymentUrl = tier === 'cip'
      ? 'https://pay.pexn.ir/l/j3pZMXG'
      : 'https://pay.pexn.ir/l/dwpBjsf';
    state.pendingTier = tier === 'cip' ? 'CIP 🎖️ — ۴۷۹٬۸۰۰ تومان' : 'VIP 🥇 — ۲۳۹٬۹۰۰ تومان';
-   save();
+   try { localStorage.setItem(key, JSON.stringify(state)); } catch (e) {}
    toast('در حال باز کردن درگاه پرداخت...');
+   const webApp = window.Telegram && window.Telegram.WebApp;
+   // Call openLink directly during the user's click gesture in Telegram Mini Apps.
    try {
-     if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openLink === 'function') {
-       window.Telegram.WebApp.openLink(paymentUrl);
+     if (webApp && typeof webApp.openLink === 'function') {
+       webApp.openLink(paymentUrl);
      } else {
-       window.location.href = paymentUrl;
+       const opened = window.open(paymentUrl, '_blank', 'noopener,noreferrer');
+       if (!opened) window.location.assign(paymentUrl);
      }
    } catch (e) {
-     window.location.href = paymentUrl;
+     window.location.assign(paymentUrl);
    }
- }));
+ });
  document.getElementById('submit-receipt').addEventListener('click',()=>{
    const file=document.getElementById('receipt-file').files?.[0];
    if(!file){toast('اول تصویر رسید را انتخاب کن.');return;}
