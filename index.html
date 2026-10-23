@@ -51,10 +51,20 @@ input:disabled{opacity:.78;cursor:not-allowed;border-style:dashed}
 </head>
 <body>
 <div class="toast" id="toast"></div>
+<div id="settings-panel" style="display:none;position:fixed;inset:0;background:#000b;z-index:30;padding:22px;align-items:center;justify-content:center">
+ <div class="form-card" style="width:min(100%,380px);background:#21172b;border-color:#ffd16666">
+  <div style="display:flex;align-items:center;justify-content:space-between"><strong style="font-size:20px;color:var(--gold2)">⚙️ تنظیمات</strong><button id="settings-close" class="music-btn" type="button">✕</button></div>
+  <button class="action setting-option" id="support-option">پشتیبانی</button>
+  <button class="action setting-option" id="report-option">گزارش مشکل</button>
+  <button class="action setting-option" id="music-toggle-option">قطع موسیقی</button>
+  <button class="action setting-option" id="language-option">تغییر زبان</button>
+  <p id="settings-note" class="warning" style="margin-bottom:0">موسیقی ملایم پس از لمس گزینه موسیقی فعال می‌شود.</p>
+ </div>
+</div>
 <main class="app">
 <header class="top">
   <div class="brand"><div class="logo">🦂</div><div><h1>عقرب</h1><small>قلمرو امتیازها</small></div></div>
-  <div class="top-actions"><a class="support-btn" href="https://t.me/Scorpiobott" target="_blank" rel="noopener">پشتیبان</a><button class="music-btn" id="music-btn" type="button">♫ موسیقی</button><div class="pill" id="user-pill">بازیکن مهمان</div></div>
+  <div class="top-actions"><a class="support-btn" href="https://t.me/Scorpiobott" target="_blank" rel="noopener">پشتیبان</a><button class="music-btn" id="settings-btn" type="button" aria-label="تنظیمات">⚙️</button><div class="pill" id="user-pill">بازیکن مهمان</div></div>
 </header>
 <section class="page active" id="home-page">
   <div class="balance">
@@ -86,18 +96,14 @@ input:disabled{opacity:.78;cursor:not-allowed;border-style:dashed}
   <div class="profilebox"><div class="avatar">🦂</div><h2 id="profile-name">بازیکن مهمان</h2><div class="muted">عضو قلمرو عقرب</div><div class="coins" id="profile-balance">0</div><div class="muted">تعداد توکن من</div>
     <div class="profile-stats"><div class="stat"><small>آیدی عددی</small><strong id="profile-id">در دسترس نیست</strong></div><div class="stat"><small>تاریخ عضویت در این دستگاه</small><strong id="profile-joined">امروز</strong></div><div class="stat"><small>تعداد زیرمجموعه</small><strong id="profile-referrals">۰</strong></div><div class="stat"><small>توکن دریافتی از زیرمجموعه‌گیری</small><strong id="profile-referral-tokens">۰</strong></div></div>
   </div>
-  <div class="form-card" style="text-align:center;margin-top:14px"><div style="font-size:36px">⏳</div><strong style="font-size:20px;color:var(--gold2)">VIP و CIP</strong><div class="soon" style="margin:10px 0">COMING SOON ⏳</div></div>
+  <div class="form-card" style="text-align:center;margin-top:14px"><div style="font-size:36px">⏳</div><strong style="font-size:17px;color:var(--gold2);line-height:1.9">قابلیت VIP ربات به‌زودی<br>در دسترس قرار می‌گیرد.</strong><div class="soon" style="margin:10px 0">Coming soon ⏳</div></div>
 </section>
 <section class="page" id="withdraw-page">
   <h2 class="section-title">💳 برداشت توکن عقرب</h2>
-  <div class="form-card" style="margin-top:14px">
-    <strong style="color:var(--gold2)">ثبت درخواست برداشت</strong>
-    <label for="withdraw-card">شماره کارت بانکی (۱۶ رقم)</label>
-    <input id="withdraw-card" type="tel" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="شماره کارت ۱۶ رقمی را وارد کن">
-    <label for="withdraw-amount">مبلغ برداشت (توکن)</label>
-    <input id="withdraw-amount" type="number" inputmode="numeric" min="1" step="1" placeholder="تعداد توکن">
-    <button class="action" id="withdraw-request">ثبت درخواست برداشت</button>
-    <p class="warning" id="withdraw-status" aria-live="polite"></p>
+  <div class="withdraw-soon" style="margin-top:14px">
+    <div class="soon">⏳</div>
+    <p style="font-size:18px;font-weight:800;color:var(--gold2);margin-bottom:8px">درگاه برداشت درحال به‌روزرسانی است.</p>
+    <p>تا پایان به‌روزرسانی توکن کسب کنید.<br>به‌زودی دست پر برمی‌گردیم. 🦂</p>
   </div>
 </section>
 </main>
@@ -115,6 +121,7 @@ input:disabled{opacity:.78;cursor:not-allowed;border-style:dashed}
  const name = tgUser ? (tgUser.first_name || 'بازیکن') : 'بازیکن مهمان';
  document.getElementById('user-pill').textContent = name;
  document.getElementById('profile-name').textContent = name;
+ const API_BASE_URL = ''; // بک‌اند و وب‌اپ باید روی یک دامنه اجرا شوند.
  const key = 'aghrab-demo-v1-' + (tgUser?.id || 'guest');
  let state;
  try { state = JSON.parse(localStorage.getItem(key)) || {}; } catch(e) { state = {}; }
@@ -222,11 +229,13 @@ input:disabled{opacity:.78;cursor:not-allowed;border-style:dashed}
  });
  document.getElementById('invite-btn').addEventListener('click',()=>{
    const bot = 'Desert_Scorpion_bot';
-   const link = tgUser ? `https://t.me/${bot}?start=${tgUser.id}` : 'برای ساخت لینک اختصاصی، بازی را از داخل ربات تلگرام باز کن.';
+   const link = tgUser ? `https://t.me/${bot}?start=ref_${tgUser.id}` : 'برای ساخت لینک اختصاصی، بازی را از داخل ربات تلگرام باز کن.';
    if(tg?.openTelegramLink && tgUser){tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent('بیا بازی عقرب رو امتحان کن! 🦂'));}
    else if(navigator.share && tgUser){navigator.share({title:'بازی عقرب',text:'بیا بازی عقرب رو امتحان کن!',url:link}).catch(()=>{});}
    else {navigator.clipboard?.writeText(link).then(()=>toast('لینک دعوت کپی شد')).catch(()=>toast('بازی را از داخل تلگرام باز کن.'));}
  });
+ // شمارش واقعی زیرمجموعه‌ها از سرور، نه فقط شمارنده محلی مرورگر.
+ (async()=>{const w=window.Telegram&&window.Telegram.WebApp;if(!w?.initData)return;try{const r=await fetch(API_BASE_URL+'/api/referrals/summary',{headers:{'Authorization':'tma '+w.initData,'Accept':'application/json'}});if(!r.ok)return;const d=await r.json();state.referrals=Number(d.referrals||0);state.referralTokens=Number(d.referral_tokens||0);state.score=Math.max(Number(state.score||0),Number(d.points||0));save();}catch(e){console.warn('Referral summary unavailable',e);}})();
  // برداشت: فقط بعد از اینکه سرور درخواست را ثبت کرد و پیام را به ادمین فرستاد، توکن‌ها از موجودی نمایشی کسر می‌شوند.
  const withdrawAmountEl=document.getElementById('withdraw-amount');
  function updateWithdrawAmount(){ if(withdrawAmountEl && !withdrawAmountEl.value) withdrawAmountEl.placeholder='حداکثر '+Number(state.score||0).toLocaleString('fa-IR')+' توکن'; }
@@ -258,7 +267,6 @@ input:disabled{opacity:.78;cursor:not-allowed;border-style:dashed}
  });
  // پرداخت امن: ایجاد سفارش باید در سرور انجام شود؛ مرورگر به‌تنهایی نمی‌تواند پرداخت را تأیید کند.
  // آدرس سرور خود را در API_BASE_URL قرار دهید. سرور باید Telegram initData را اعتبارسنجی کند.
- const API_BASE_URL = ''; // API هم‌دامنه؛ بازی و بک‌اند باید از همین سرور اجرا شوند
  // پاداش ورود هر ۲۴ ساعت؛ در صورت در دسترس بودن سرور از محدودیت حساب تلگرام استفاده می‌شود.
  const dailyLoginButton=document.getElementById('daily-login-status');
  const dailyLoginKey=key+'-daily-login-at';
@@ -381,35 +389,45 @@ input:disabled{opacity:.78;cursor:not-allowed;border-style:dashed}
    document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='profile-page'));
    document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
  });
- // موسیقی آرام با Web Audio؛ برای رعایت محدودیت مرورگر فقط پس از لمس دکمه شروع می‌شود.
- let audioCtx=null, musicTimer=null, musicOn=false, musicStep=0;
- function playTone(){
-   if(!audioCtx||!musicOn)return;
-   // A short, gentle desert-like arpeggio synthesized locally (no external audio file needed).
-   const notes=[220,261.63,329.63,392,329.63,293.66,261.63,196];
-   const base=audioCtx.currentTime;
-   for(let j=0;j<4;j++){
+ // موسیقی پس‌زمینه ملایم و پیوسته؛ شروع فقط پس از اقدام کاربر (محدودیت مرورگر).
+ let audioCtx=null, musicTimer=null, musicOn=false, padNodes=[];
+ async function startSoftMusic(){
+   const C=window.AudioContext||window.webkitAudioContext;
+   if(!C){toast('پخش موسیقی در این مرورگر پشتیبانی نمی‌شود.');return;}
+   if(!audioCtx) audioCtx=new C();
+   if(audioCtx.state==='suspended') await audioCtx.resume();
+   stopSoftMusic(false);
+   musicOn=true;
+   // Soft sustained chord pads, not short beeps.
+   const master=audioCtx.createGain(); master.gain.value=0.0001; master.connect(audioCtx.destination);
+   master.gain.setTargetAtTime(0.055,audioCtx.currentTime,1.2);
+   const freqs=[130.81,164.81,196.00,261.63];
+   freqs.forEach((f,i)=>{
      const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
-     const t=base+j*0.34, freq=notes[musicStep++%notes.length];
-     osc.type='sine';osc.frequency.setValueAtTime(freq,t);
-     gain.gain.setValueAtTime(0.0001,t);
-     gain.gain.linearRampToValueAtTime(0.035,t+0.06);
-     gain.gain.exponentialRampToValueAtTime(0.0001,t+0.30);
-     osc.connect(gain);gain.connect(audioCtx.destination);osc.start(t);osc.stop(t+0.32);
-   }
+     osc.type='sine'; osc.frequency.value=f; gain.gain.value=[0.42,0.28,0.22,0.12][i];
+     osc.connect(gain);gain.connect(master);osc.start();padNodes.push(osc,gain);
+   });
+   padNodes.push(master);
+   const btn=document.getElementById('music-toggle-option'); if(btn)btn.textContent='قطع موسیقی';
+   const note=document.getElementById('settings-note'); if(note)note.textContent='موسیقی ملایم روشن است 🎵';
+   musicTimer=setInterval(()=>{ if(!audioCtx||!musicOn)return; const t=audioCtx.currentTime; padNodes.forEach((n,i)=>{if(n instanceof OscillatorNode){const base=[130.81,164.81,196,261.63][padNodes.filter(x=>x instanceof OscillatorNode).indexOf(n)]||196;n.frequency.setTargetAtTime(base*(Math.random()<0.18?1.005:1),t,2.5);}}); },7000);
  }
- document.getElementById('music-btn').addEventListener('click',async()=>{
-   try{
-     const AudioContextClass=window.AudioContext||window.webkitAudioContext;
-     if(!AudioContextClass){toast('این مرورگر از پخش موسیقی پشتیبانی نمی‌کند.');return;}
-     if(!audioCtx)audioCtx=new AudioContextClass();
-     if(audioCtx.state==='suspended')await audioCtx.resume();
-     musicOn=!musicOn;
-     document.getElementById('music-btn').textContent=musicOn?'♫ موسیقی روشن':'♫ موسیقی';
-     if(musicOn){playTone();musicTimer=setInterval(playTone,1500);toast('موسیقی صحرا روشن شد 🎵');}
-     else{clearInterval(musicTimer);musicTimer=null;toast('موسیقی خاموش شد');}
-   }catch(e){toast('برای پخش، صدای گوشی را بررسی و دوباره بزن.');}
- });
+ function stopSoftMusic(show=true){
+   musicOn=false; if(musicTimer){clearInterval(musicTimer);musicTimer=null;}
+   if(audioCtx){try{padNodes.forEach(n=>{if(n instanceof OscillatorNode)n.stop();try{n.disconnect()}catch(e){}})}catch(e){}}
+   padNodes=[];
+   const btn=document.getElementById('music-toggle-option'); if(btn)btn.textContent='پخش موسیقی ملایم';
+   const note=document.getElementById('settings-note'); if(note)note.textContent='موسیقی خاموش است.';
+   if(show)toast('موسیقی قطع شد');
+ }
+ const settingsPanel=document.getElementById('settings-panel');
+ document.getElementById('settings-btn').addEventListener('click',()=>{settingsPanel.style.display='flex';});
+ document.getElementById('settings-close').addEventListener('click',()=>{settingsPanel.style.display='none';});
+ settingsPanel.addEventListener('click',e=>{if(e.target===settingsPanel)settingsPanel.style.display='none';});
+ document.getElementById('support-option').addEventListener('click',()=>{if(tg?.openTelegramLink)tg.openTelegramLink('https://t.me/Scorpiobott');else window.open('https://t.me/Scorpiobott','_blank');});
+ document.getElementById('report-option').addEventListener('click',()=>{const msg=prompt('مشکل را کوتاه توضیح بده:');if(msg&&msg.trim()){const url='https://t.me/Scorpiobott';if(tg?.openTelegramLink)tg.openTelegramLink(url);else window.open(url,'_blank');toast('گزارش را برای پشتیبانی ارسال کن.');}});
+ document.getElementById('music-toggle-option').addEventListener('click',async()=>{if(musicOn)stopSoftMusic();else{try{await startSoftMusic();}catch(e){toast('پخش موسیقی ممکن نشد. دوباره تلاش کن.');}}});
+ document.getElementById('language-option').addEventListener('click',()=>toast('زبان‌های بیشتر به‌زودی اضافه می‌شوند.'));
  // مخزن فقط دو بار در روز شارژ می‌شود؛ شارژ تدریجی حذف شده است.
  render();
 })();
