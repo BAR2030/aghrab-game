@@ -1,0 +1,1 @@
+فایل‌های این بسته را در ریشه مخزن GitHub جایگزین فایل‌های هم‌نام کن. در Render → Environment، متغیر FOOTBALL_DATA_TOKEN را تنظیم کن و Deploy latest commit را اجرا کن. پوشش لیگ‌ها به مجوز API بستگی دارد؛ لیگ ایران در پلن رایگان football-data.org تضمین نشده است.\n
