@@ -1,10 +1,98 @@
-<!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>فوتبال زنده</title><style>
-*{box-sizing:border-box}body{margin:0;background:#08111f;color:#f5f7fb;font-family:Tahoma,Arial}main{max-width:850px;margin:auto;padding:16px}.panel{background:#111e30;border:1px solid #2b3b50;border-radius:16px;padding:16px;margin-bottom:14px}p{color:#aebdd0;line-height:1.8}select,button{font:inherit;color:white;background:#0a1524;border:1px solid #304158;border-radius:10px;padding:12px}select{width:100%;margin:8px 0}.days{display:flex;gap:8px;overflow-x:auto;padding:8px 0}.day{min-width:105px;white-space:pre-line}.active{background:#176b3b}.match,.notice{background:#0a1524;border:1px solid #2b3b50;border-radius:12px;padding:13px;margin:10px 0}.league{color:#75e8a3;font-size:12px;margin-bottom:10px}.teams{display:flex;justify-content:space-between;gap:8px;align-items:center}.score{font-size:18px;white-space:nowrap}.meta{display:flex;justify-content:space-between;color:#aebdd0;font-size:12px;margin-top:10px}</style><main><section class="panel"><h1>⚽ فوتبال زنده</h1><p>برنامه بازی‌ها با تاریخ شمسی</p><select id="league"><option value="ALL">همه رقابت‌های موجود</option></select></section><section class="panel"><b>لیست بازی‌های امروز و روزهای باقی‌مانده ماه</b><div id="month" class="notice"></div><div id="days" class="days"></div><div id="status" class="notice">در حال دریافت بازی‌ها…</div><div id="list"></div></section></main><script>
-const $=x=>document.getElementById(x);let selected='';
-function jalali(gy,gm,gd){let gdm=[0,31,(gy%4===0&&gy%100!==0)||gy%400===0?29:28,31,30,31,30,31,31,30,31,30,31],gy2=gm>2?gy+1:gy,days=355666+365*gy+Math.floor((gy2+3)/4)-Math.floor((gy2+99)/100)+Math.floor((gy2+399)/400)+gd;for(let i=1;i<gm;i++)days+=gdm[i];let jy=-1595;days-=79;jy+=33*Math.floor(days/12053);days%=12053;jy+=4*Math.floor(days/1461);days%=1461;if(days>=366){jy+=Math.floor((days-1)/365);days=(days-1)%365}let jm,jd;if(days<186){jm=1+Math.floor(days/31);jd=1+days%31}else{jm=7+Math.floor((days-186)/30);jd=1+(days-186)%30}return[jy,jm,jd]}
-function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}function local(s){return new Date(s+'T12:00:00')}function fa(s){return String(s).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d])}function jd(s){let d=local(s),j=jalali(d.getFullYear(),d.getMonth()+1,d.getDate());return `${fa(j[0])}/${fa(String(j[1]).padStart(2,'0'))}/${fa(String(j[2]).padStart(2,'0'))}`}
-function days(){let n=new Date(),j=jalali(n.getFullYear(),n.getMonth()+1,n.getDate()),a=[],d=new Date(n.getFullYear(),n.getMonth(),n.getDate());for(let i=0;i<35;i++){let s=iso(d),k=jalali(d.getFullYear(),d.getMonth()+1,d.getDate());if(k[0]===j[0]&&k[1]===j[1])a.push(s);d.setDate(d.getDate()+1)}if(!a.includes(selected))selected=a[0];$('month').textContent='ماه شمسی '+fa(j[0])+'/'+fa(String(j[1]).padStart(2,'0'));$('days').innerHTML='';a.forEach(s=>{let b=document.createElement('button'),d=local(s);b.className='day '+(s===selected?'active':'');b.textContent=jd(s)+' '+d.toLocaleDateString('fa-IR',{weekday:'long'});b.onclick=()=>{selected=s;days();load()};$('days').appendChild(b)})}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function load(){ $('status').textContent='در حال دریافت…';$('list').innerHTML='';try{let l=$('league').value,r=await fetch(`/api/matches?dateFrom=${selected}&dateTo=${selected}${l!=='ALL'?'&competition='+l:''}`),d=await r.json();if(d.error){$('status').textContent=d.error+(d.details||'');return}let m=d.matches||[];if(!m.length){$('status').textContent='برای این روز مسابقه‌ای از سرویس دریافت نشد. تاریخ دیگری انتخاب کن یا همه رقابت‌ها را بزن.';return}$('status').textContent=fa(m.length)+' مسابقه در '+jd(selected);$('list').innerHTML=m.map(x=>`<article class="match"><div class="league">${esc(x.competition)}</div><div class="teams"><span>${esc(x.homeTeam)}</span><span class="score">${x.homeScore??'–'} : ${x.awayScore??'–'}</span><span>${esc(x.awayTeam)}</span></div><div class="meta"><span>${esc(x.status)}</span><span>${esc(x.localTime)}</span></div></article>`).join('')}catch(e){$('status').textContent='اتصال به سرور ناموفق بود.'}}
-async function comps(){try{let d=await(await fetch('/api/competitions')).json();d.competitions.forEach(c=>{let o=document.createElement('option');o.value=c.code;o.textContent=c.name;$('league').appendChild(o)})}catch(e){}}$('league').onchange=load;days();comps().then(load);
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>فوتبال زنده</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#08111f;color:#f5f7fb;font-family:Tahoma,Arial}
+main{max-width:850px;margin:auto;padding:16px}.panel{background:#111e30;border:1px solid #2b3b50;border-radius:16px;padding:16px;margin-bottom:14px}
+p{color:#aebdd0;line-height:1.8}select,button{font:inherit;color:white;background:#0a1524;border:1px solid #304158;border-radius:10px;padding:12px}
+select{width:100%;margin:8px 0}.days{display:flex;gap:8px;overflow-x:auto;padding:8px 0}.day{min-width:125px;white-space:pre-line}
+.active{background:#176b3b}.match,.notice{background:#0a1524;border:1px solid #2b3b50;border-radius:12px;padding:13px;margin:10px 0}
+.league{color:#75e8a3;font-size:12px;margin-bottom:10px}.teams{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.score{font-size:18px;white-space:nowrap}.meta{display:flex;justify-content:space-between;color:#aebdd0;font-size:12px;margin-top:10px}
+</style>
+</head>
+<body>
+<main>
+<section class="panel">
+<h1>⚽ فوتبال زنده</h1><p>برنامه بازی‌ها با تاریخ شمسی و ساعت ایران</p>
+<select id="league"><option value="ALL">همه رقابت‌های موجود</option></select>
+</section>
+<section class="panel">
+<b>لیست بازی‌های امروز و روزهای باقی‌مانده ماه</b>
+<div id="month" class="notice"></div><div id="days" class="days"></div>
+<div id="status" class="notice">در حال دریافت بازی‌ها…</div><div id="list"></div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let selected="";
+function jalali(gy,gm,gd){
+ let gdm=[0,31,(gy%4===0&&gy%100!==0)||gy%400===0?29:28,31,30,31,30,31,31,30,31,30,31];
+ let gy2=gm>2?gy+1:gy;
+ let days=355666+365*gy+Math.floor((gy2+3)/4)-Math.floor((gy2+99)/100)+Math.floor((gy2+399)/400)+gd;
+ for(let i=1;i<gm;i++)days+=gdm[i];
+ let jy=-1595;days-=79;jy+=33*Math.floor(days/12053);days%=12053;
+ jy+=4*Math.floor(days/1461);days%=1461;
+ if(days>=366){jy+=Math.floor((days-1)/365);days=(days-1)%365}
+ let jm,jd;
+ if(days<186){jm=1+Math.floor(days/31);jd=1+days%31}
+ else{jm=7+Math.floor((days-186)/30);jd=1+(days-186)%30}
+ return[jy,jm,jd]
+}
+function iso(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function local(s){return new Date(s+"T12:00:00")}
+function fa(s){return String(s).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d])}
+function jalaliDate(s){let d=local(s),j=jalali(d.getFullYear(),d.getMonth()+1,d.getDate());return `${fa(j[0])}/${fa(String(j[1]).padStart(2,"0"))}/${fa(String(j[2]).padStart(2,"0"))}`}
+function renderDays(){
+ let now=new Date(),j=jalali(now.getFullYear(),now.getMonth()+1,now.getDate()),arr=[],d=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ for(let i=0;i<35;i++){
+  let s=iso(d),k=jalali(d.getFullYear(),d.getMonth()+1,d.getDate());
+  if(k[0]===j[0]&&k[1]===j[1])arr.push(s);
+  d.setDate(d.getDate()+1);
+ }
+ if(!arr.includes(selected))selected=arr[0];
+ $("month").textContent="ماه شمسی "+fa(j[0])+"/"+fa(String(j[1]).padStart(2,"0"));
+ $("days").innerHTML="";
+ arr.forEach(s=>{
+  let b=document.createElement("button"),dt=local(s);
+  b.className="day "+(s===selected?"active":"");
+  b.textContent=jalaliDate(s)+" "+dt.toLocaleDateString("fa-IR",{weekday:"long"});
+  b.onclick=()=>{selected=s;renderDays();loadMatches()};
+  $("days").appendChild(b);
+ });
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+async function loadMatches(){
+ $("status").textContent="در حال دریافت مسابقات…";$("list").innerHTML="";
+ try{
+  let league=$("league").value;
+  let url=`/api/matches?dateFrom=${selected}&dateTo=${selected}&competition=${encodeURIComponent(league)}`;
+  let response=await fetch(url),data=await response.json();
+  if(data.error){$("status").textContent=data.error+(data.details?" — "+data.details:"");return}
+  let games=data.matches||[];
+  if(!games.length){$("status").textContent="برای این تاریخ مسابقه‌ای از سرویس دریافت نشد. روز دیگری را انتخاب کن.";return}
+  $("status").textContent=fa(games.length)+" مسابقه در "+jalaliDate(selected);
+  $("list").innerHTML=games.map(m=>`<article class="match">
+   <div class="league">${esc(m.competition)}</div>
+   <div class="teams"><span>${esc(m.homeTeam)}</span><span class="score">${m.homeScore??"–"} : ${m.awayScore??"–"}</span><span>${esc(m.awayTeam)}</span></div>
+   <div class="meta"><span>${esc(m.status)}</span><span>${esc(m.localTime)}</span></div>
+  </article>`).join("");
+ }catch(e){$("status").textContent="اتصال به سرور ناموفق بود."}
+}
+async function loadCompetitions(){
+ try{
+  let response=await fetch("/api/competitions"),data=await response.json();
+  (data.competitions||[]).forEach(c=>{
+   let option=document.createElement("option");option.value=c.code;option.textContent=c.name;
+   $("league").appendChild(option);
+  });
+ }catch(e){}
+}
+$("league").onchange=loadMatches;
+renderDays();loadCompetitions().then(loadMatches);
 </script>
+</body>
+</html>

@@ -1,1 +1,6 @@
-services:\n  - type: web\n    name: football-live\n    runtime: python\n    buildCommand: pip install -r requirements.txt\n    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT\n    envVars:\n      - key: FOOTBALL_DATA_TOKEN\n        sync: false\n
+services:
+  - type: web
+    name: football-live
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
